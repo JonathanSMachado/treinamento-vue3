@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AurhService should return a token when user login 1`] = `
+Object {
+  "data": Object {
+    "token": "123.123.123",
+  },
+  "errors": null,
+}
+`;
+
+exports[`AurhService should return on user when user register 1`] = `
+Object {
+  "email": "jonathan@gmail.com",
+  "name": "Jonathan",
+  "password": "1234",
+}
+`;
