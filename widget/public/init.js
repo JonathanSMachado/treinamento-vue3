@@ -43,7 +43,7 @@ function init (apiKey) {
   }
 
   const script = document.createElement('script')
-  script.src = '//cdn.jsdeliver.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js'
+  script.src = 'https://cdn.jsdeliver.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js'
   script.async = 'async'
   script.addEventListener('load', handleLoadWidget)
 
