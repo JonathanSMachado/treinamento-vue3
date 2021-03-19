@@ -7,7 +7,7 @@ function init (apiKey) {
 
     const WIDGET_URL = `https://jonathansmachado-feedbacker-widget.netlify.app?api_key=${apiKey}&page=${page}&fingerprint=${fingerprint.visitorId}`
     const config = { method: 'HEAD' }
-    const res = await fetch(`https://backend-treinamento-vue3-nine.vercel.app/apikey/exists?apiKey=${apiKey}`, config)
+    const res = await fetch(`https://backend-treinamento-vue3-nine.vercel.app/apikey/exists?apikey=${apiKey}`, config)
 
     if (res.status === 200) {
       const iframe = document.createElement('iframe')
