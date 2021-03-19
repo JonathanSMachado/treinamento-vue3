@@ -1,54 +1,57 @@
 <template>
-  <div class="flex justify-center w-full h-28 bg-brand-main">
-    <header-logged />
-  </div>
-  <div class="flex flex-col justify-center items-center h-64 bg-brand-gray">
-    <h1 class="text-4xl font-black text-center text-gray-800">
-      Feedbacks
-    </h1>
-    <p class="text-lg text-center tex-gray-800 font-regular">
-      Detalhes de todos os feedbacks recebidos
-    </p>
-  </div>
+  <div>
+    <div class="flex justify-center w-full h-28 bg-brand-main">
+      <header-logged />
+    </div>
+    <div class="flex flex-col justify-center items-center h-64 bg-brand-gray">
+      <h1 class="text-4xl font-black text-center text-gray-800">
+        Feedbacks
+      </h1>
+      <p class="text-lg text-center tex-gray-800 font-regular">
+        Detalhes de todos os feedbacks recebidos
+      </p>
+    </div>
 
-  <div class="flex justify-center w-full pb-20">
-    <div class="w-4/5 max-w-6xl py-10 grid grid-cols-4 gap-2">
-      <div>
-        <h1 class="text-3xl font-black text-brand-darkgray mb-5">
-          Listagem
-        </h1>
-        <h1 class="text-2xl font-regular text-brand-darkgray">
-          Filtros
-        </h1>
-        <suspense>
-          <template #default>
-            <filters class="animate__animated animate__fadeIn animate__faster"/>
-          </template>
-          <template #fallback>
-            <filters-loader />
-          </template>
-        </suspense>
-      </div>
-      <div class="col-span-3 px-10 pt-20">
-        <p class="text-large text-center text-gray-800 font-regular"
-          v-if="state.hasErrors">
-          Aconteceu um erro ao carregar os Feedbacks!
-        </p>
-        <p class="text-large text-center text-gray-800 font-regular"
-          v-if="!state.feedbacks.length && !state.isLoading && !state.isLoadingFeedbacks && !state.hasError">
-          Nenhum Feedback recebido!
-        </p>
+    <div class="flex justify-center w-full pb-20">
+      <div class="w-4/5 max-w-6xl py-10 grid grid-cols-4 gap-2">
+        <div>
+          <h1 class="text-3xl font-black text-brand-darkgray mb-5">
+            Listagem
+          </h1>
+          <h1 class="text-2xl font-regular text-brand-darkgray">
+            Filtros
+          </h1>
+          <suspense>
+            <template #default>
+              <filters class="animate__animated animate__fadeIn animate__faster"
+                @select="changeFeedbacksType"/>
+            </template>
+            <template #fallback>
+              <filters-loader />
+            </template>
+          </suspense>
+        </div>
+        <div class="col-span-3 px-10 pt-20">
+          <p class="text-large text-center text-gray-800 font-regular"
+            v-if="state.hasErrors">
+            Aconteceu um erro ao carregar os Feedbacks!
+          </p>
+          <p class="text-large text-center text-gray-800 font-regular"
+            v-if="!state.feedbacks.length && !state.isLoading && !state.isLoadingFeedbacks && !state.hasError">
+            Nenhum Feedback recebido!
+          </p>
 
-        <feedback-card-loading v-if="state.isLoading || state.isLoadingFeedbacks"/>
+          <feedback-card-loading v-if="state.isLoading || state.isLoadingFeedbacks"/>
 
-        <feedback-card v-else
-          v-for="(feedback, index) in state.feedbacks"
-          class="mb-8"
-          :key="feedback.id"
-          :is-opened="index === 0"
-          :feedback="feedback" />
+          <feedback-card v-else
+            v-for="(feedback, index) in state.feedbacks"
+            class="mb-8"
+            :key="feedback.id"
+            :is-opened="index === 0"
+            :feedback="feedback" />
 
-        <feedback-card-loading v-if="state.isLoadingMoreFeedbacks"/>
+          <feedback-card-loading v-if="state.isLoadingMoreFeedbacks"/>
+        </div>
       </div>
     </div>
   </div>
@@ -135,6 +138,24 @@ export default {
       }
     }
 
+    async function changeFeedbacksType (type) {
+      try {
+        state.isLoadingFeedbacks = true
+        state.pagination.offset = 0
+        state.pagination.limit = 5
+        state.currentFeedbackType = type
+        const { data } = await services.feedbacks.getAll({
+          type,
+          ...state.pagination
+        })
+        state.feedbacks = data.results
+        state.pagination = data.pagination
+        state.isLoadingFeedbacks = false
+      } catch (error) {
+        handleErrors(error)
+      }
+    }
+
     async function fetchFeedbacks () {
       try {
         state.isLoading = true
@@ -152,10 +173,10 @@ export default {
     }
 
     return {
-      state
+      state,
+      changeFeedbacksType
     }
   }
-
 }
 </script>
 
